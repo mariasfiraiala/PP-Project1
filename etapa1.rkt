@@ -7,15 +7,19 @@
 ; bărbaților și calculează lista bărbaților din problemă.
 ; Folosiți recursivitate pe stivă.
 (define (get-men mpref)
-  'your-code-here)
+  (cond
+    ((null? mpref) null)
+    (else (cons (car (car mpref)) (get-men (cdr mpref))))))
 
 
 ; TODO 2
 ; Implementați o funcție care primește lista preferințelor
 ; femeilor și calculează lista femeilor din problemă.
 ; Folosiți recursivitate pe coadă.
-(define (get-women wpref)
-  'your-code-here)
+(define (get-women wpref [acc null])
+  (cond
+    ((null? wpref) (reverse acc))
+    (else (get-women (cdr wpref) (cons (car (car wpref)) acc)))))
 
 
 ; TODO 3
@@ -30,7 +34,9 @@
 ; preferințelor unei persoane p, ne referim la o listă care conține
 ; doar persoanele de sex opus, nu și pe p pe prima poziție.
 (define (get-pref-list pref person)
-  'your-code-here)
+  (cond
+    ((equal? (car (car pref)) person) (cdr (car pref)))
+    ((get-pref-list (cdr pref) person))))
 
 
 ; TODO 4
@@ -41,8 +47,16 @@
 ; și false în caz contrar.
 ; Nu folosiți operatori condiționali, folosiți în schimb operatori
 ; logici pentru a obține același efect.
+;(define (preferable? pref-list x y)
+;  (cond
+;    ((equal? (car pref-list) x) #t)
+;    ((equal? (car pref-list) y) #f)
+;    (else (preferable? (cdr pref-list) x y))))
+
 (define (preferable? pref-list x y)
-  'your-code-here)
+  (or (and (equal? (car pref-list) x) #t)
+      (and (not (equal? (car pref-list) x)) (equal? (car pref-list) y) #f)
+      (and (not (equal? (car pref-list) x)) (not (equal? (car pref-list) y)) (preferable? (cdr pref-list) x y))))
 
 
 ; TODO 5
@@ -53,7 +67,10 @@
 ; întoarce false.
 ; Folosiți cond.
 (define (get-partner engagements person)
-  'your-code-here)
+  (cond
+    ((null? engagements) #f)
+    ((equal? (car (car engagements)) person) (cdr (car engagements)))
+    (else (get-partner (cdr engagements) person))))
 
 
 ; TODO 6
@@ -68,4 +85,9 @@
 ;   - p1 îl preferă pe p' în raport cu p2
 ;   - p' îl preferă pe p1 în raport cu persoana cu care este logodit
 (define (better-match-exists? p1 p2 p1-list pref2 engagements)
-  'your-code-here)
+  (cond
+    ((equal? (car p1-list) p2) #f)
+    (else (or (helper (car p1-list) p1 engagements pref2) (better-match-exists? p1 p2 (cdr p1-list) pref2 engagements)))))
+
+(define (helper name1 name2 engagements pref2)
+  (preferable? (get-pref-list pref2 name1) name2 (get-partner engagements name1)))
