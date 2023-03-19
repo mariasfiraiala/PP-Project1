@@ -47,12 +47,6 @@
 ; și false în caz contrar.
 ; Nu folosiți operatori condiționali, folosiți în schimb operatori
 ; logici pentru a obține același efect.
-;(define (preferable? pref-list x y)
-;  (cond
-;    ((equal? (car pref-list) x) #t)
-;    ((equal? (car pref-list) y) #f)
-;    (else (preferable? (cdr pref-list) x y))))
-
 (define (preferable? pref-list x y)
   (or (and (equal? (car pref-list) x) #t)
       (and (not (equal? (car pref-list) x)) (equal? (car pref-list) y) #f)
