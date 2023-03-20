@@ -15,7 +15,7 @@
 ; bărbaților și calculează lista bărbaților din problemă.
 ; Folosiți orice funcțională exceptând foldl/foldr.
 (define (get-men mpref)
-  (((curry map) car) mpref))
+  (map car mpref))
 
 
 ; TODO 2
@@ -25,7 +25,7 @@
 ; Folosiți foldl sau foldr, astfel încât să nu fie necesare
 ; operații de tip append sau reverse.
 (define (get-women wpref)
-  (foldr cons null (((curry map) car) wpref)))
+  (foldr cons null (map car wpref)))
 
 
 ; TODO 3
@@ -52,8 +52,8 @@
 ; și false în caz contrar.
 ; Folosiți funcția member.
 (define (preferable? pref-list x y)
-  (and (list? (member x pref-list)) (list? (member y pref-list))
-       (< 0 (- (length (member x pref-list)) (length (member y pref-list))))
+  (if (and (list? (member x pref-list)) (list? (member y pref-list)))
+      (< 0 (- (length (member x pref-list)) (length (member y pref-list))))
        #f))
 
 
@@ -130,6 +130,7 @@
 (define (helper name1 name2 engagements pref2)
   (preferable? (get-pref-list pref2 name1) name2 (get-partner engagements name1)))
 
+
 ; TODO 9
 ; Implementați funcția stable-match? care primește o listă 
 ; completă de logodne engagements, o listă de preferințe masculine 
@@ -142,5 +143,6 @@
 ; - fiecare cuplu din lista engagements are pe prima poziție
 ;   o femeie
 (define (stable-match? engagements mpref wpref)
-  (and (map (λ (L) (not (or (better-match-exists? (car L) (cdr L) (get-pref-list wpref (car L)) mpref engagements) (better-match-exists? (cdr L) (car L) (get-pref-list mpref (cdr L)) wpref engagements)))) engagements)))
-
+  (foldl (λ (L acc) (and acc (not (better-match-exists? (cdr L) (car L) (get-pref-list mpref (cdr L)) wpref engagements))))
+  #t
+  engagements))
