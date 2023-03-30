@@ -23,19 +23,20 @@
 ; named let pentru a vă putea conforma acestor restricții.
 (define (get-unstable-couples engagements mpref wpref)
   (let unstable
-    ([man-engagements (let reverse-engagements ([engagements engagements] [acc null])
-                        (if (null? engagements)
-                            (reverse acc)
-                            (reverse-engagements (cdr engagements) (cons (cons (cdr (car engagements)) (car (car engagements))) acc))))]
+    ([man-engagements (map (λ (x) (cons (cdr x) (car x))) engagements)]
      [women-engagements engagements]
      [engagements engagements]
      [result null])
-    (cond
-      ((null? engagements) (reverse result))
-      ((or (better-match-exists? (cdr (car engagements)) (car (car engagements)) (get-pref-list mpref (cdr (car engagements))) wpref women-engagements)
-           (better-match-exists? (car (car engagements)) (cdr (car engagements)) (get-pref-list wpref (car (car engagements))) mpref man-engagements))
-       (unstable man-engagements women-engagements (cdr engagements) (cons (car engagements) result)))
-      (else (unstable man-engagements women-engagements (cdr engagements) result)))))
+    (if (null? engagements)
+        (reverse result)
+        (let* ([pair (car engagements)]
+               [rest (cdr engagements)]
+               [woman (car pair)]
+               [man (cdr pair)])
+          (if (or (better-match-exists? man woman (get-pref-list mpref man) wpref women-engagements)
+                  (better-match-exists? woman man (get-pref-list wpref woman) mpref man-engagements))
+              (unstable man-engagements women-engagements rest (cons pair result))
+              (unstable man-engagements women-engagements rest result))))))
 
 
 ; TODO 2
@@ -61,14 +62,14 @@
     ([free-men free-men]
      [engagements engagements])
     (cond
-       ((null? free-men) engagements)
-       (else (let ([man (car free-men)])
-          (let engage-helper1 ([man-pref (get-pref-list mpref man)])
-            (let* ([woman (car man-pref)] [woman-partner (get-partner engagements woman)])
-              (cond
-                ((not woman-partner) (engage-helper0 (cdr free-men) (cons (cons woman man) engagements)))
-                ((preferable? (get-pref-list wpref woman) man woman-partner) (engage-helper0 (cons woman-partner (cdr free-men)) (update-engagements engagements woman man)))
-                (else (engage-helper1 (cdr man-pref)))))))))))
+      ((null? free-men) engagements)
+      (else (let ([man (car free-men)])
+              (let engage-helper1 ([man-pref (get-pref-list mpref man)])
+                (let* ([woman (car man-pref)] [woman-partner (get-partner engagements woman)])
+                  (cond
+                    ((not woman-partner) (engage-helper0 (cdr free-men) (cons (cons woman man) engagements)))
+                    ((preferable? (get-pref-list wpref woman) man woman-partner) (engage-helper0 (cons woman-partner (cdr free-men)) (update-engagements engagements woman man)))
+                    (else (engage-helper1 (cdr man-pref)))))))))))
 
 
 ; TODO 3
