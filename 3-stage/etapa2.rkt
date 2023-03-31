@@ -25,7 +25,7 @@
 ; Folosiți foldl sau foldr, astfel încât să nu fie necesare
 ; operații de tip append sau reverse.
 (define (get-women wpref)
-  (foldr cons null (map car wpref)))
+  (foldl (λ (x acc) (cons (car x) acc)) null wpref))
 
 
 ; TODO 3
@@ -39,7 +39,7 @@
 ; (get-pref-list wpref 'ana) => '(bobo adi cos)
 ; Folosiți minim o funcțională și minim o funcție anonimă.
 (define (get-pref-list pref person)
-  (cdr (car (filter (λ (L) (member person L)) pref))))
+  (cdr (car (filter (λ (L) (equal? person (first L))) pref))))
 
 
 ; TODO 4
@@ -144,5 +144,5 @@
 ;   o femeie
 (define (stable-match? engagements mpref wpref)
   (foldl (λ (L acc) (and acc (not (better-match-exists? (cdr L) (car L) (get-pref-list mpref (cdr L)) wpref engagements))))
-  #t
-  engagements))
+         #t
+         engagements))

@@ -65,7 +65,8 @@
       ((null? free-men) engagements)
       (else (let ([man (car free-men)])
               (let engage-helper1 ([man-pref (get-pref-list mpref man)])
-                (let* ([woman (car man-pref)] [woman-partner (get-partner engagements woman)])
+                (let* ([woman (car man-pref)]
+                       [woman-partner (get-partner engagements woman)])
                   (cond
                     ((not woman-partner) (engage-helper0 (cdr free-men) (cons (cons woman man) engagements)))
                     ((preferable? (get-pref-list wpref woman) man woman-partner) (engage-helper0 (cons woman-partner (cdr free-men)) (update-engagements engagements woman man)))
